@@ -1,4 +1,3 @@
-// import usersData from "../assets/users.json";
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import {
   addContactThunk,
@@ -17,6 +16,8 @@ const slice = createSlice({
   initialState,
   selectors: {
     selectContacts: (state) => state.contacts,
+    selectLoading: (state) => state.loading,
+    selectError: (state) => state.error,
   },
   extraReducers: (builder) => {
     builder
@@ -27,7 +28,10 @@ const slice = createSlice({
         state.contacts.push(payload);
       })
       .addCase(deleteContactThunk.fulfilled, (state, { payload }) => {
-        state.contacts = state.contacts.filter((user) => user.id !== payload);
+        const index = state.contacts.findIndex((contact) => {
+          return contact.id === payload;
+        });
+        state.contacts.splice(index, 1);
       })
       .addMatcher(
         isAnyOf(
@@ -36,8 +40,8 @@ const slice = createSlice({
           deleteContactThunk.rejected
         ),
         (state, { payload }) => {
-          state.error = payload;
           state.loading = false;
+          state.error = payload;
         }
       )
       .addMatcher(
@@ -48,19 +52,21 @@ const slice = createSlice({
         ),
         (state) => {
           state.loading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          fetchContactsThunk.fulfilled,
+          addContactThunk.fulfilled,
+          deleteContactThunk.fulfilled
+        ),
+        (state) => {
+          state.loading = false;
         }
       );
   },
-
-  // reducers: {
-  //   addNewContact: (state, { payload }) => {
-  //     state.contacts.push(payload);
-  //   },
-  //   deleteContact: (state, { payload }) => {
-  //     state.contacts = state.contacts.filter((user) => user.id !== payload);
-  //   },
-  // },
 });
 
 export const contactsReduce = slice.reducer;
-export const { selectContacts } = slice.selectors;
+export const { selectContacts, selectLoading, selectError } = slice.selectors;
