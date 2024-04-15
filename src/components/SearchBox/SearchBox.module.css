@@ -1,0 +1,17 @@
+.input {
+  display: flex;
+  margin: 0 auto;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 10px;
+  width: 300px;
+  margin-bottom: 50px;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 30px;
+  color: white;
+}
