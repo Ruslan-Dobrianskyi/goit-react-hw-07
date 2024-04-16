@@ -1,31 +1,20 @@
 import Contact from "../Contact/Contact";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { selectContacts } from "../../redux/contactsSlice";
-import { selectFilter } from "../../redux/filterSlice";
-
 import s from "./ContactList.module.css";
 import { deleteContactThunk } from "../../redux/contactsOps";
+import { selectFilteredContactsMemo } from "../../redux/selectors";
 const ContactList = () => {
-  const contacts = useSelector(selectContacts);
-  const searchStr = useSelector(selectFilter);
-
-  const getFilteredUsers = () => {
-    return contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(searchStr.toLowerCase())
-    );
-  };
-  const filteredContacts = getFilteredUsers();
-
+  const contacts = useSelector(selectFilteredContactsMemo);
   const dispatch = useDispatch();
   const handleDelete = (id) => {
     dispatch(deleteContactThunk(id));
   };
   return (
     <div className={s.list}>
-      {filteredContacts.reverse().map((filteredContact) => (
-        <ul key={filteredContact.id}>
-          <Contact contact={filteredContact} onDelete={handleDelete} />
+      {[...contacts].reverse().map((contact) => (
+        <ul key={contact.id}>
+          <Contact contact={contact} onDelete={handleDelete} />
         </ul>
       ))}
     </div>

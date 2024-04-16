@@ -20,7 +20,6 @@ const App = () => {
       <ContactForm />
       {loading && <Loader />}
       <SearchBox />
-
       <ContactList />
     </div>
   );
